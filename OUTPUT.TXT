@@ -1,0 +1,6 @@
+MuR: 93.0208
+MuC: 40.9388
+Density: 0.000525421
+ Processing is finished.
+
+ Non-Zero elements: 7247838
