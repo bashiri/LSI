@@ -1,10 +1,13 @@
-
+ 
 // Author: Hassan Bashiri, April 2004, (Farvardin 1382)
 
-#include <iostream.h> 
-#include <fstream.h>
+#include <iostream> 
+#include <fstream>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
+
+
+using namespace std;
 
 #define MAX 951000
 #define TER 949000
