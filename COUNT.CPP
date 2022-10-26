@@ -1,7 +1,12 @@
-#include <iostream.h>
-#include <fstream.h>
-#include <string.h>
+#include <iostream>
+#include <fstream>
+#include <string>
 #include <stdlib.h>
+
+using namespace std;
+
+
+int const TERMS = 78896;
 
 int main()
 {
@@ -12,7 +17,7 @@ int main()
 		return 0;
 	}
 
-	int dfArray[78896];       // there are 78895 terms in collection
+	int dfArray[TERMS];       // there are 78895 terms in collection
 	char str[20];
 	while ( !docfreq.eof() ){
 		docfreq.getline(str, 20, '\n');
