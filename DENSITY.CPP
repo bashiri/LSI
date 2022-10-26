@@ -1,11 +1,14 @@
 
 // Author: Hassan Bashiri, April 2004, (Farvardin 1382)
 
-#include <iostream.h> 
-#include <fstream.h>
+#include <iostream> 
+#include <fstream>
 #include <conio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
+
+
+using namespace std;
 
 #define ROW 77896  // there is 77895 terms
 #define COL 177090 // there is 177089 documents
@@ -43,7 +46,7 @@ int main(void)
 	MuR = (float)(sum) / ( ROW - 1 );
 
 	sum = 0;
-	for(i = 1; i < COL; i++)
+	for(int i = 1; i < COL; i++)
 		sum = sum + colMtx[i];
 	MuC = (float)(sum) / ( COL - 1 );
 
