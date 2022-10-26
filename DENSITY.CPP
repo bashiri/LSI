@@ -1,65 +1,126 @@
 
 // Author: Hassan Bashiri, April 2004, (Farvardin 1382)
 
+
 #include <iostream> 
 #include <fstream>
 #include <conio.h>
 #include <stdlib.h>
 #include <string>
-
+#include <math.h>
 
 using namespace std;
 
-#define ROW 77896  // there is 77895 terms
-#define COL 177090 // there is 177089 documents
+#define MAX 950000
+#define NumofDoc 177089
 
 int main(void)
 {
-	ifstream infile("termDoc.mtx",ios::in);
-	if (!infile){
-		cerr << "Input file could not be opened"  << endl;
+
+	ofstream paramFile("CollectionParameters.txt",ios::out); 
+	if (!paramFile){
+		cerr << "Output file could not be created"  << endl;
 		exit(1);
 	}
 
-	long int rowMtx[ROW] = {0};
-	long int colMtx[COL] = {0};
-
-	int nonzero = 0;
-	int row, col;
-	double weight;
-	while ( !infile.eof() ){
-		infile >> row >> col >> weight;
-		if ( row == 0 || col == 0 ){
-			cout << "error. " << endl;
-			break;
-		}
-		nonzero++;
-		rowMtx[row]++;
-		colMtx[col]++;
+	paramFile << "docID No.UniqueTerms average(tf)" << endl;
+	
+	ifstream itemsFile("Items.txt",ios::in);
+	if (!itemsFile){
+		cerr << "Items file could not be opened"  << endl;
+		exit(1);
 	}
 
-	int sum = 0;
-	float MuR = 0;
-	float MuC = 0;
-	for (int i = 1; i < ROW; i++)
-		sum = sum + rowMtx[i];
-	MuR = (float)(sum) / ( ROW - 1 );
+	char line[MAX] = "";		   // reading a line from input file
+	long int len = 0;
+	double Pivot = 0;
 
-	sum = 0;
-	for(int i = 1; i < COL; i++)
-		sum = sum + colMtx[i];
-	MuC = (float)(sum) / ( COL - 1 );
+	//Read Items.txt from Qavanin collection 
 
-	ofstream out("output.txt", ios::out);
+	cout << "Please wait ............." << endl;
+	while ( !itemsFile.eof() ){
+		itemsFile.getline(line, MAX, '\n'); 
+		int len = strlen(line);
+		if ( len < 2 ){
+			cout << "Empty line is read. " << endl;
+			continue;
+		} // Line #lineNo is read.
+			
+		if ( len > MAX ){
+			cout << "Very large is read. " << endl;
+			exit(1);
+		} 
 
-	out << "MuR: " << MuR << endl;
-	out << "MuC: " << MuC << endl;
+		int nuwCounter = 0;
+		float avgTF = 0;
+		int sumoftf = 0;
+		char *docID = line;                  //specify docID
+		char *next = strchr(docID, ' ');     //find blank to seperate docID 
+		*next = '\0';                        //close blank to fix docID as a string
+		next++;
 
-	float density = (float)( MuR * MuC ) / nonzero;
-	out << "Density: " << density << endl;
+		char *temp = strchr(next, ' ');     // doc lenght
+		if ( !temp){
+			cerr << "Input format is wrong.\n";
+			return 0;
+		}
+		*temp = '\0';
+		temp++;
 
-	out << " Processing is finished." << endl;
-	infile.close();
-	out << endl << " Non-Zero elements: " << nonzero << endl;
+		double docLen = atof(next);
+		Pivot =  Pivot + docLen;
+
+		next = temp;
+		
+		char* num = next;                    //specify  n             
+		next = strchr(num, ' ');
+		if ( !next){
+			cerr << "Input format is wrong.\n";
+			return 0;
+		}
+		*next = '\0';
+		next++;
+		unsigned int n = atoi (num);
+
+		for (unsigned int i = 0; i < n ; i++){		
+			char *termID = next;             //specify termID
+			if ( !(*termID) )
+				break;
+			next = strchr(termID, ' ');      //find blank to seperate termID    
+			if ( !next){
+				cerr << "Input format is wrong.\n";
+				return 0;
+			}
+			*next = '\0';                    //close blank to fix termID as a string
+			next++;
+		
+			char* tf = next;		    	 //specify term frequency
+			next = strchr(tf, ' ');
+			if ( !next){
+				cerr << "Input format is wrong.\n";
+				return 0;
+			}
+			*next = '\0';
+			next++;
+
+			int termf = atoi(tf);
+			sumoftf = sumoftf + termf;
+			if ( termf == 1 )
+				nuwCounter++;								
+		}// for
+
+		if ( n != 0 )
+			avgTF = (float)sumoftf / n;
+		paramFile << docID << ' ' << nuwCounter << ' ' << avgTF << endl;
+	}//while file reading
+
+	Pivot = Pivot / NumofDoc;
+
+	cout << endl;
+	cout << "Pivot = " << Pivot << endl;
+	itemsFile.close();		
+	paramFile.close();
+
+	cout << " Processing is finished." << endl;
 	return 0;
 }
